@@ -1,6 +1,7 @@
 import os
 import joblib
 from sklearn.ensemble import RandomForestClassifier
+from imblearn.over_sampling import SMOTE
 from sklearn.model_selection import (train_test_split, GridSearchCV, 
                                      StratifiedKFold, cross_val_score)
 
@@ -22,10 +23,14 @@ def Model(X_train, y_train):
     }
 
     grid_search = GridSearchCV(estimator=rf, param_grid=params,
-                               cv = skf, scoring='f1',n_jobs=-1)
+                               cv = skf, scoring='f1',n_jobs=-1, verbose=1)
     
+    # Apply SMOTE to training data 
+    smote = SMOTE(random_state=42)
+    X_train_resampled, y_train_resampled = smote.fit_resample(X_train, y_train)
+
     print("Started trainin Random Forest Classifier")
-    grid_search.fit(X_train,y_train)
+    grid_search.fit(X_train_resampled,y_train_resampled)
     print(f"Best Parameters: {grid_search.best_params_}")
 
     return grid_search.best_estimator_
