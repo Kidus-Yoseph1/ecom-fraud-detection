@@ -1,4 +1,5 @@
-from preprocess import preprocess, encode, scale
+import os
+import joblib
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import (train_test_split, GridSearchCV, 
                                      StratifiedKFold, cross_val_score)
@@ -29,3 +30,16 @@ def Model(X_train, y_train):
 
     return grid_search.best_estimator_
 
+def save_model_artifacts(model, scaler, encoder, folder='models'):
+    os.makedirs(folder, exist_ok=True)
+
+    # Save the model
+    joblib.dump(model, f'{folder}/fraud_random_forest_model.pkl')
+    
+    # Save the scaler 
+    joblib.dump(scaler, f'{folder}/scaler.pkl')
+
+    # Save the encoder 
+    joblib.dump(encoder, f'{folder}/encoder.pkl')
+
+    print(f"All artifacts saved successfully to the '{folder}' directory.")
