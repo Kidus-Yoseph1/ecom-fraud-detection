@@ -62,7 +62,7 @@ def preprocess(fraud_path, ip_path, final_path):
     
     fraud_merged.loc[fraud_merged['ip_address'] > fraud_merged['upper_bound_ip_address'], 'country'] = 'unknown'
     # fill the remaining NANs with "unknown"
-    fraud_merged['cuntry'] = fraud_merged['country'].fillna('Unknown')
+    fraud_merged['country'] = fraud_merged['country'].fillna('Unknown')
     
     # save the merged data to a csv 
     fraud_merged.to_csv(final_path,index= False)
