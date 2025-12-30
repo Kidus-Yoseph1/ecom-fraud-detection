@@ -1,9 +1,9 @@
 import pandas as pd 
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 
-def preprocess(credit_path, fraud_path, ip_path, final_path):
+def preprocess(fraud_path, ip_path, final_path):
     ## load all the csv data   
-    credit_df = pd.read_csv(credit_path)
+
     fraud_df = pd.read_csv(fraud_path)
     ip_df = pd.read_csv(ip_path)
 
@@ -16,7 +16,7 @@ def preprocess(credit_path, fraud_path, ip_path, final_path):
 
     # remove duplicates
     fraud_df = fraud_df.drop_duplicates()
-    credit_df = credit_df.drop_duplicates()
+    
 
     print("updated data types for fraud data")
     print(fraud_df[['purchase_time', 'signup_time']].dtypes)
