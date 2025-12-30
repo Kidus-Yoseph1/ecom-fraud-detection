@@ -33,6 +33,11 @@ def preprocess(fraud_path, ip_path, final_path):
     fraud_df = fraud_df.sort_values('ip_address')
     ip_df = ip_df.sort_values('lower_bound_ip_address')
 
+    # extract time-base features
+    fraud_merged['hour_of_day'] = fraud_merged['purchase_time'].dt.hour
+    fraud_merged['day_of_week'] = fraud_merged['purchase_time'].dt.dayofweek
+
+
     # perform range based merge
     fraud_merged  = pd.merge_asof(
         fraud_df,
@@ -41,11 +46,17 @@ def preprocess(fraud_path, ip_path, final_path):
         right_on='lower_bound_ip_address'
     ) 
 
+    # extract time-base features
+    fraud_merged['hour_of_day'] = fraud_merged['purchase_time'].dt.hour
+    fraud_merged['day_of_week'] = fraud_merged['purchase_time'].dt.dayofweek
+    # time_since_signup (Duration in seconds)
+    fraud_merged['time_since_signup'] = (fraud_merged['purchase_time'] - fraud_merged['signup_time']).dt.total_seconds()
+
     """
     check if the actually falls within the upper bound of the range,
     if its outside the range, the country should be 'unknown'
     """
-
+    
     fraud_merged.loc[fraud_merged['ip_address'] > fraud_merged['upper_bound_ip_address'], 'country'] = 'unknown'
     # fill the remaining NANs with "unknown"
     fraud_merged['cuntry'] = fraud_merged['country'].fillna('Unknown')
