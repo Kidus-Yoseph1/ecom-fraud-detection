@@ -33,11 +33,7 @@ def preprocess(fraud_path, ip_path, final_path):
     fraud_df = fraud_df.sort_values('ip_address')
     ip_df = ip_df.sort_values('lower_bound_ip_address')
 
-    # extract time-base features
-    fraud_merged['hour_of_day'] = fraud_merged['purchase_time'].dt.hour
-    fraud_merged['day_of_week'] = fraud_merged['purchase_time'].dt.dayofweek
-
-
+   
     # perform range based merge
     fraud_merged  = pd.merge_asof(
         fraud_df,
@@ -52,6 +48,13 @@ def preprocess(fraud_path, ip_path, final_path):
     # time_since_signup (Duration in seconds)
     fraud_merged['time_since_signup'] = (fraud_merged['purchase_time'] - fraud_merged['signup_time']).dt.total_seconds()
 
+    ### Transaction velocity and frequency
+    # Number of transactions per device
+    fraud_merged['device_count'] = fraud_merged.groupby('device_id')['device_id'].transform('count')
+
+    # Number of transactions per IP address
+    fraud_merged['ip_count'] = fraud_merged.groupby('ip_address')['ip_address'].transform('count')
+
     """
     check if the actually falls within the upper bound of the range,
     if its outside the range, the country should be 'unknown'
@@ -62,7 +65,7 @@ def preprocess(fraud_path, ip_path, final_path):
     fraud_merged['cuntry'] = fraud_merged['country'].fillna('Unknown')
     
     # save the merged data to a csv 
-    fraud_merged.to_csv(final_path)
+    fraud_merged.to_csv(final_path,index= False)
     return fraud_merged
 
 def encode(X_train, X_test, cat_cols: list):
@@ -81,6 +84,9 @@ def encode(X_train, X_test, cat_cols: list):
     # Drop original categorical columns and join encoded ones
     X_train_encoded = X_train.drop(columns=cat_cols).join(X_train_encoded_df)
     X_test_encoded = X_test.drop(columns=cat_cols).join(X_test_encoded_df)
+    print("-"* 20)
+    print("Encoding Completed")
+    print("-"* 20)
 
     return X_train_encoded, X_test_encoded, encoder
 
@@ -90,7 +96,9 @@ def scale(X_train, X_test, num_cols: list):
     X_train_scaled[num_cols] = scaler.fit_transform(X_train[num_cols])
 
     X_test_scaled = X_test.copy()
-    X_train_scaled[num_cols] = scaler.transform(X_test[num_cols])
-
+    X_test_scaled[num_cols] = scaler.transform(X_test[num_cols])
+    print("-"* 20)
+    print("Scaling Completed")
+    print("-"* 20)
     return X_train_scaled, X_test_scaled, scaler
 
