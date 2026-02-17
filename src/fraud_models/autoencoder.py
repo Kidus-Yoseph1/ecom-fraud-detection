@@ -47,7 +47,7 @@ def preprocess_autoencoder(file_path):
     print("Encoding & Scaling Completed")
     print("-" * 20)
 
-    return X_train_final, X_test_final,  y_train, y_test, scaler
+    return X_train_final, X_test_final,  y_train, y_test, scaler, encoder
 
 class TransactionAutoencoder(nn.Module):
     """
@@ -155,7 +155,7 @@ class TransactionAutoencoder(nn.Module):
         print("--- Classification Report ---")
         print(classification_report(y_test_np, y_pred, target_names=['Normal', 'Fraud']))
 
-    def save_fraud_model(self, scaler, directory='models/autoencoder', filename='autoencoder_v1.pth'):
+    def save_fraud_model(self, scaler, encoder, directory='models/autoencoder', filename='autoencoder_v1.pth'):
         """
         Saves the PyTorch model state_dict to the specified directory.
         """
@@ -175,5 +175,8 @@ class TransactionAutoencoder(nn.Module):
         joblib.dump(scaler, scaler_path)
         print(f"Scaler successfully saved to: {scaler_path}")
 
+        encoder_path = os.path.join(directory, 'autoencoder_encoder.joblib')
+        joblib.dump(encoder, encoder_path)
+        print(f"Encoder successfully saved to: {encoder_path}")
 
         
