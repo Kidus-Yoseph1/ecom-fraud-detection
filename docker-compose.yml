@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: dockerfile
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./models:/app/models
+      - ./Data:/app/Data
+    environment:
+      PYTHONUNBUFFERED: 1
+
