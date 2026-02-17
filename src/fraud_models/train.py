@@ -38,7 +38,7 @@ if __name__ == "__main__":
     fraud_df = 'Data/processed/processed_data.csv'
 
     # preprocess
-    X_train, X_test, y_train, y_test, scaler = preprocess_autoencoder(fraud_df)
+    X_train, X_test, y_train, y_test, autoencoder_scaler = preprocess_autoencoder(fraud_df)
 
     # Convert & Filter (Only train on Normal transactions)
     X_train_ts = torch.tensor(X_train.values, dtype=torch.float32)
@@ -54,6 +54,6 @@ if __name__ == "__main__":
     model.evaluate(X_test_ts, y_test_ts, percentile=92)
 
     # save dict states
-    model.save_fraud_model()
+    model.save_fraud_model(autoencoder_scaler)
 
 
