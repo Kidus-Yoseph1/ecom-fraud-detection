@@ -6,6 +6,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
 import torch
 import torch.nn as nn
+import joblib
 
 def preprocess_autoencoder(file_path):
     # load data
@@ -154,7 +155,7 @@ class TransactionAutoencoder(nn.Module):
         print("--- Classification Report ---")
         print(classification_report(y_test_np, y_pred, target_names=['Normal', 'Fraud']))
 
-    def save_fraud_model(self, directory='models/autoencoder', filename='autoencoder_v1.pth'):
+    def save_fraud_model(self, scaler, directory='models/autoencoder', filename='autoencoder_v1.pth'):
         """
         Saves the PyTorch model state_dict to the specified directory.
         """
@@ -168,8 +169,11 @@ class TransactionAutoencoder(nn.Module):
 
         # Save the state_dict
         torch.save(self.state_dict(), filepath)
-        
         print(f"Model successfully saved to: {filepath}")
+        
+        scaler_path = os.path.join(directory, 'autoencoder_scaler.joblib')
+        joblib.dump(scaler, scaler_path)
+        print(f"Scaler successfully saved to: {scaler_path}")
 
 
         
