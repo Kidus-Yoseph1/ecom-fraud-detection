@@ -1,6 +1,9 @@
-joblib
 numpy
 pandas
 scikit-learn
+torch
 imblearn
 matplotlib
+seaborn
+joblib
+streamlit
