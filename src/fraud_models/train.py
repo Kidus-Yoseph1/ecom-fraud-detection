@@ -16,29 +16,29 @@ num_cols =  ['purchase_value', 'age', 'time_since_signup', 'hour_of_day', 'day_o
 
 
 if __name__ == "__main__":
-    # # preprocess the data
-    fraud_merged = preprocess(fraud_path,ip_path,full_file_path)
-    # split the data
-    X_train, X_test, y_train, y_test = split(fraud_merged)
-    # encode the data
-    X_train_encoded, X_test_encoded, encoder = encode(X_train,X_test,cat_cols)
-    # scale the data
-    X_train_scaled, X_test_scaled, scaler = scale(X_train_encoded,X_test_encoded,num_cols)
-    # train the Random forest  model
-    model = Model(X_train_scaled,y_train)
+    # # # preprocess the data
+    # fraud_merged = preprocess(fraud_path,ip_path,full_file_path)
+    # # split the data
+    # X_train, X_test, y_train, y_test = split(fraud_merged)
+    # # encode the data
+    # X_train_encoded, X_test_encoded, encoder = encode(X_train,X_test,cat_cols)
+    # # scale the data
+    # X_train_scaled, X_test_scaled, scaler = scale(X_train_encoded,X_test_encoded,num_cols)
+    # # train the Random forest  model
+    # model = Model(X_train_scaled,y_train)
 
-    # evaluate the model performance
-    evaluate(model,X_test_scaled,y_test)
+    # # evaluate the model performance
+    # evaluate(model,X_test_scaled,y_test)
 
-    # and finally save the model artifacts (model, scale and encoder)for later use
-    save_model_artifacts(model,scaler,encoder)
+    # # and finally save the model artifacts (model, scale and encoder)for later use
+    # save_model_artifacts(model,scaler,encoder)
 
 
     # train the autoencoder
     fraud_df = 'Data/processed/processed_data.csv'
 
     # preprocess
-    X_train, X_test, y_train, y_test, autoencoder_scaler = preprocess_autoencoder(fraud_df)
+    X_train, X_test, y_train, y_test, autoencoder_scaler, autoencoder_encoder = preprocess_autoencoder(fraud_df)
 
     # Convert & Filter (Only train on Normal transactions)
     X_train_ts = torch.tensor(X_train.values, dtype=torch.float32)
@@ -54,6 +54,6 @@ if __name__ == "__main__":
     model.evaluate(X_test_ts, y_test_ts, percentile=92)
 
     # save dict states
-    model.save_fraud_model(autoencoder_scaler)
+    model.save_fraud_model(autoencoder_scaler, autoencoder_encoder)
 
 
